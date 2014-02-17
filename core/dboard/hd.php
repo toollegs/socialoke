@@ -115,7 +115,7 @@ function paintGigCode()
 	global $tonightsVenue;
 
 	$code = getTonightsCode();
-	echo '<div id="gigcode"><span>Gig Code: '.$code.'('.strtoupper(trim($tonightsVenue)).')</span></div>';
+	echo '<div id="gigcode"><span>Gig Code: '.$code.'</span></div>';
 }
 
 function getStartGigText()
