@@ -1,0 +1,31 @@
+<?php
+
+include '/var/www/html/beta/core/globals.php';
+$url = startPage("login");
+$r = 0;
+if (isset($_GET['redir'])) {
+	$r = $_GET['redir'];
+}
+if (isset($_GET['ph'])) {
+	$ph = $_GET['ph'];
+}
+if ($r == '1') {
+//	$fullVenue = getFullVenue($_SERVER["REQUEST_URI"]);
+	#$loc = "http://s-oke.com/beta/".$fullVenue."/core/login.php?ph=".$ph;
+	$loc = "http://s-oke.com/beta/core/login.php?ph=".$ph;
+	header("Location: ".$loc);
+	exit();
+}
+session_start();
+session_unset();
+$ph = 'none';
+if (isset($_GET['ph'])) {
+	$ph = $_GET['ph'];
+}
+session_put('ph',$ph);
+$uri = startPage('main');
+$host = $uri['host'];
+$hostUpper = strtoupper($uri['host']);
+
+header("Location: http://s-oke.com/beta/core/login.php?ph=urlencode($ph);");
+?>

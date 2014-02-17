@@ -1,0 +1,13 @@
+<?php
+
+include '/var/www/html/beta/jeff-cathay_021714,1400/core/globals.php';
+
+session_start();
+session_put("l","1");
+
+$ph = session_get("ph");
+if (!isset($ph)) {
+	$ph = 'none';
+}
+header("Location: http://s-oke.com/beta/jeff-cathay_021714,1400/core/main.php?ph=$ph");
+?>
