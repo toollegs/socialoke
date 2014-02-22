@@ -426,21 +426,28 @@ function dropEvent($from,$venue,$host)
 	$realRet = trim($retArr[count($retArr)-1]);
 	echo "first ret: ".$realRet;
 	$f = file(trim($ret));
-	foreach ($f as $line) {
-		echo "line: ".$line;
-		echo "the file:<br/>/usr/logs/mysocialoke/archives/".$symLink."/".$realRet;
-		file_put_contents('/usr/logs/mysocialoke/archives/'.$symLink.'/'.$realRet,$line,FILE_APPEND | LOCK_EX);
+	if ($f == null || count($f) == 0) {
+		file_put_contents('/usr/logs/mysocialoke/archives/'.$symLink.'/'.$realRet,"NO RESULTS",FILE_APPEND | LOCK_EX);
+	} else {
+		foreach ($f as $line) {
+			echo "line: ".$line;
+			echo "the file:<br/>/usr/logs/mysocialoke/archives/".$symLink."/".$realRet;
+			file_put_contents('/usr/logs/mysocialoke/archives/'.$symLink.'/'.$realRet,$line,FILE_APPEND | LOCK_EX);
+		}
 	}
-	$f = file('/usr/logs/mysocialoke/votes/'.$realRet.'.log');
 	$vfnArr = explode('_',$realRet);
 	$vfn='/usr/logs/mysocialoke/archives/'.$symLink.'/votes.'.$vfnArr[1];
-	foreach ($f as $line) {
-		file_put_contents($vfn,$line,FILE_APPEND | LOCK_EX);
+	if (!file_exists('/usr/logs/mysocialoke/votes/'.$realRet.'.log')) {
+		file_put_contents($vfn,"NO RESULTS",FILE_APPEND | LOCK_EX);
+	} else {
+		$f = file('/usr/logs/mysocialoke/votes/'.$realRet.'.log');
+		foreach ($f as $line) {
+			file_put_contents($vfn,$line,FILE_APPEND | LOCK_EX);
+		}
 	}
 	$ret = shell_exec('rm -rf /usr/logs/mysocialoke/votes/'.$realRet.'.log');
 	$ret = shell_exec('rm -rf /var/www/html/beta/'.$symLink.'*');
 	$ret = shell_exec('rm -rf /usr/logs/mysocialoke/venuesOn/'.$symLink.'*');
-	$ret = shell_exec('rm -rf /var/www/html/'.$venue);
 	unlink('/var/www/html/'.$venue);
 	doSMS($from,$host." at ".$venue." is now OFF");
 }

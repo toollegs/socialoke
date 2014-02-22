@@ -10,6 +10,7 @@ $rnd = n_digit_random(7);
 if ($name_parm != null && $name_parm != '') {
 	$text = $_POST['t'];
 	$ph=session_get('ph');
+	$text = urldecode($text);
 	$textArr = explode(' by ',$text);
 	$songArr = array();
 	$songArr[0] = str_replace('%26','&',firstlast($textArr[0]));
@@ -26,10 +27,10 @@ if ($flirt != null && $flirt != '') {
         $flirt = str_replace("'","",$flirt);
         $text .= ". You sent this note to ".ucfirst($host).": ".$flirt;
 }
+$key = addNote($ph,$name_parm,$host,$code,$flirt);
 if ($flirt != '') {
 	$textForHost .= " Read Note: http://s-oke.com/ho/".$key;
 }
-$key = addNote($ph,$name_parm,$host,$code,$flirt);
 $realPH = base64_decode($ph);
 $venue = $url['fullvenue'];
 $smsRet = "None";
@@ -37,15 +38,7 @@ if (isVenueOn($venue)) {
         $smsRet = "smsRet: ".doSMS($destphones,$textForHost);
 }
 ?>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>Gorham Productions</title>
-<meta name="viewport" id="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=10.0,initial-scale=1.0,maximum-scale=1, user-scalable=no">
-<link rel="stylesheet" href="http://www.GorhamProductions.com/karaoke/themes/GorhamPro.min.css" />
-<link rel="stylesheet" href="http://code.jquery.com/mobile/1.3.2/jquery.mobile.structure-1.3.2.min.css" />
-<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
-<script src="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.js"></script>
+<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Gorham Productions</title><meta name="viewport" id="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=10.0,initial-scale=1.0,maximum-scale=1, user-scalable=no"><link rel="stylesheet" href="http://GorhamProductions.com/karaoke/themes/GorhamPro.min.css" /> <?php echo file_get_contents('http://s-oke.com/beta/core/assets/jquery-include.php'); ?>
 </head>
 <body>
 <div data-role="page" id="home" data-theme="f">
@@ -66,7 +59,7 @@ if (isVenueOn($venue)) {
 <?php
 
 $t4Url = $name_parm."||";
-$t4Url .= $_POST['t'];
+$t4Url .= urldecode($_POST['t']);
 if (isset($flirt)) {
 	$t4Url .= "||".$flirt;
 }

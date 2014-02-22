@@ -20,8 +20,8 @@ if ($s == 1) {
 	$f[0] = file($letter.'.csv');
 }
 ?>
-<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Gorham Productions</title><meta name="viewport" id="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=10.0,initial-scale=1.0,maximum-scale=1, user-scalable=no"><link rel="stylesheet" href="http://www.GorhamProductions.com/karaoke/themes/GorhamPro.min.css" /><link rel="stylesheet" href="http://code.jquery.com/mobile/1.3.2/jquery.mobile.structure-1.3.2.min.css" /><script src="http://code.jquery.com/jquery-1.9.1.min.js"></script><script src="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.js"></script>
-</head> 
+<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Gorham Productions</title><meta name="viewport" id="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=10.0,initial-scale=1.0,maximum-scale=1, user-scalable=no"><link rel="stylesheet" href="http://GorhamProductions.com/karaoke/themes/GorhamPro.min.css" /> <?php echo file_get_contents('http://s-oke.com/beta/core/assets/jquery-include.php'); ?>
+</head>
 <body> 
 <div data-role="page" id="page" data-theme="f">
 	<div data-role="header" data-position="fixed" data-theme="f">
@@ -41,12 +41,10 @@ $liText = array();
 foreach($f as $songsForLetter) {
 	foreach ($songsForLetter as $song) {
 		$songPieces = explode(' - ',$song);
-/*
 		$songPieces[0] = str_replace('&','%26',$songPieces[0]);
-		$songPieces[0] = str_replace('\'','&apos;',$songPieces[0]);
+//		$songPieces[0] = str_replace('\'','&apos;',$songPieces[0]);
 		$songPieces[1] = str_replace('&','%26',$songPieces[1]);
-		$songPieces[1] = str_replace('\'','&apos;',$songPieces[1]);
-*/
+//		$songPieces[1] = str_replace('\'','&apos;',$songPieces[1]);
 		if (stripos($songPieces[0],$q) !== false) {
 			$found = 1;
 			$smsstring = urlencode(trim($songPieces[0]).' - '.trim($songPieces[1])); 
@@ -59,7 +57,7 @@ $liText = array_unique($liText);
 sort($liText);
 $i = 0;
 foreach($liText as $t) {
-	$href = "/beta/core/sm/sm.php?s=".str_replace(' - ',' by ',$t);
+	$href = "/beta/core/sm/sm.php?s=".urlencode(str_replace(' - ',' by ',trim($t)));
 	echo '<li data-theme="f" id="a'.$i.'"><a href="'.$href.'" id="a'.$i.'" class="hover">'.$t.'</a></li>';
 	$i = $i+1;
 }
@@ -79,3 +77,4 @@ if ($found == 0) {
 	<?php echo file_get_contents('../assets/footer.php'); ?>
 </div>
 </body>
+</html>

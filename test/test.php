@@ -1,5 +1,5 @@
 <html><head><title>AJAX PHP test</title>
-<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<script src="/beta/core/assets/jquery-include.js"></script>
 </head>
 <body>
 <form id="foo">

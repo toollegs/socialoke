@@ -47,29 +47,15 @@ function doSongs($letter,$q)
 	
 			if ($newArtist == 1) {
 		?>
-			<li data-theme="f"><a href="/beta/core/a/as.php?a=<?php echo $curArtist; ?>" class="hover"><?php echo $curArtist; ?></a></li>
+			<li data-theme="f"><a href="/beta/core/a/as.php?a=<?php echo urlencode($curArtist); ?>" class="hover"><?php echo $curArtist; ?></a></li>
 		<?php
 			}
 		}
 	}
 }
 ?>
-<!DOCTYPE html> 
-<html>
-<head>
-<meta charset="UTF-8">
-<title>Gorham Productions</title>
-<meta name="viewport" id="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=10.0,initial-scale=1.0,maximum-scale=1, user-scalable=no">
-<link rel="stylesheet" href="http://www.GorhamProductions.com/karaoke/themes/GorhamPro.min.css" />
-<link rel="stylesheet" href="http://code.jquery.com/mobile/1.3.2/jquery.mobile.structure-1.3.2.min.css" />
-<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
-<script src="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.js"></script>
-<!--<link rel="stylesheet" type="text/css" href="css/jquery.mobile.alphascroll.css" />
-<script type="text/javascript" src="js/jquery.mobile.alphascroll.js"></script>
-<script>$( document ).ready( function() { 
-$( '#mylistview' ).listview( 'refresh' ).alphascroll();
-})</script>-->
-</head> 
+<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Gorham Productions</title><meta name="viewport" id="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=10.0,initial-scale=1.0,maximum-scale=1, user-scalable=no"><link rel="stylesheet" href="http://GorhamProductions.com/karaoke/themes/GorhamPro.min.css" /> <?php echo file_get_contents('http://s-oke.com/beta/core/assets/jquery-include.php'); ?>
+</head>
 <body> 
 
 <div data-role="page" id="page" data-theme="f">
