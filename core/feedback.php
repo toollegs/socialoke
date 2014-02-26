@@ -1,5 +1,5 @@
 <?php  
-include '/var/www/html/beta/core/globals.php';
+include_once('/var/www/html/beta/core/globals.php');
 
 $ph='none';
 if (isset($_GET['ph'])) {
@@ -67,7 +67,7 @@ if ($_POST) {
 <div id="back-button" class="centerer">
 	<h3><a href="/beta/core/login.php?r=1&ph=<?php echo $ph; ?>&guid=<?php echo n_digit_random(6);?>" data-role="button">Back To Main Menu</a></h3>
 </div>
-<?php echo file_get_contents('assets/footer.php'); ?>
+	<?php include_once('/var/www/html/beta/core/assets/footer.php'); ?>
 
 </body> 
 </html> 

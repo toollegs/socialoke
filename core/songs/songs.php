@@ -1,6 +1,6 @@
 <?php
 
-include '/var/www/html/beta/core/globals.php';
+include_once('/var/www/html/beta/core/globals.php');
 
 $url=startPage("songs");
 $q = $_GET['q'];
@@ -58,7 +58,7 @@ sort($liText);
 $i = 0;
 foreach($liText as $t) {
 	$href = "/beta/core/sm/sm.php?s=".urlencode(str_replace(' - ',' by ',trim($t)));
-	echo '<li data-theme="f" id="a'.$i.'"><a href="'.$href.'" id="a'.$i.'" class="hover">'.$t.'</a></li>';
+	echo '<li data-theme="f" data-icon="" id="a'.$i.'"><a href="'.$href.'" id="a'.$i.'" class="hover">'.$t.'</a></li>';
 	$i = $i+1;
 }
 ?>
@@ -74,7 +74,7 @@ if ($found == 0) {
 	<div id="back-button" class="centerer">
                 <h3><a href="/beta/core/login.php?r=1&ph=<?php echo $ph; ?>&guid=<?php echo n_digit_random(6);?>" data-role="button">Back To Main Menu</a></h3>
         </div>
-	<?php echo file_get_contents('../assets/footer.php'); ?>
+	<?php include_once('/var/www/html/beta/core/assets/footer.php'); ?>
 </div>
 </body>
 </html>

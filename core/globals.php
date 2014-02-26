@@ -140,6 +140,7 @@ function addToHistory($venue,$t,$noteKey)
 
 	$hvArr=explode('_',$venue);
 	$hv = $hvArr[0];
+	$histStr = str_replace('&amp;','&',str_replace('&apos;',"'",$histStr));
 
 	if ($fromMO != null && $fromMO != '') {	
 		file_put_contents('/usr/logs/mysocialoke/venuesOn/'.$venue,$histStr.PHP_EOL, FILE_APPEND | LOCK_EX);
@@ -155,6 +156,7 @@ function addToFavs($venue,$song)
 	};
 	$favStr=$fromMO."||".str_replace(' - ',' by ',$song);
 	$favStr=$fromMO."||".str_replace('%26','&',$song);
+	$favStr = str_replace('&amp;','&',str_replace('&apos;',"'",$favStr));
 	$hvArr=explode('_',$venue);
 	$hv = $hvArr[0];
 	if ($fromMO != null && $fromMO != '') {	
@@ -329,4 +331,20 @@ function getHostPhone($host)
 	$kHosts = getKnownHosts();
 	
 	return $kHosts[$host];
+}
+
+function doCustBranding($custid)
+{
+
+// TBD
+/*
+	if (!isset($custid) || $custid === '') {
+		return '<div id="host-logo" style="display:inline;"><a href="http://www.gorhamproductions.com" rel="external"><img src="http://www.gorhamproductions.com/wp-content/uploads/2011/06/Gorham-Productions-logo.jpg" width="150" height="58"></a></div>';
+	}
+*/
+}
+
+function doSocialokeBranding()
+{
+	return '<div id="fb-like" style="display:inline;"><a href="https://www.facebook.com/socialoke" rel="external"><img src="/beta/core/assets/socialoke-likeus.png" width="58" height="58"></a></div>';
 }

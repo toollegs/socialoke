@@ -1,8 +1,9 @@
 <?php
 
-include '/var/www/html/beta/core/globals.php';
+include_once('/var/www/html/beta/core/globals.php');
 
-startPage("popular");
+$url = startPage("popular");
+$ph = session_get('ph');
 $dom = new DomDocument();
 $urlStr='http://www.gorhamproductions.com/karaoke/popular.php';
 $fstr = str_replace(' data-filter="true"','', str_replace('<a href="index.html" data-icon="arrow-l" data-rel="back" data-transition="flip">Back</a>','', file_get_contents($urlStr)));
@@ -26,7 +27,7 @@ for ($i = 0; $i < $li->length; $i++) {
 	$smsstring = urlencode(trim($artistPieces[1]).' - '.trim($artistPieces[0])); 
 	$smsstring = str_replace('%26amp%3B','and',$smsstring);
 	$smsstring = str_replace('%26apos%3B','',$smsstring);
-	$href = "../userinput/userinput.php?t=".str_replace('+-+','+by+',$smsstring);
+	$href = "../userinput/userinput.php?t=".str_replace('+-+','+by+',$smsstring).'&ph='.$ph;
 	$anchor->setAttribute('href',$href);
 	$anchor->setAttribute('class','hover');
 	$liNode->appendChild($anchor);
@@ -34,7 +35,7 @@ for ($i = 0; $i < $li->length; $i++) {
 
 foreach ($dom->getElementsByTagName('link') as $node) {
 	if (!startsWith($node->getAttribute('href'),'http:')) {
-		$node->setAttribute('href','http://www.GorhamProductions.com/karaoke/'.$node->getAttribute('href'));
+		$node->setAttribute('href','/beta/'.$node->getAttribute('href'));
 	}
 }
 #addJQuery($dom);

@@ -1,6 +1,6 @@
 <?php
 
-include '/var/www/html/beta/core/globals.php';
+include_once('/var/www/html/beta/core/globals.php');
 
 $url=startPage("artists");
 $q = $_GET['q'];
@@ -47,7 +47,7 @@ function doSongs($letter,$q)
 	
 			if ($newArtist == 1) {
 		?>
-			<li data-theme="f"><a href="/beta/core/a/as.php?a=<?php echo urlencode($curArtist); ?>" class="hover"><?php echo $curArtist; ?></a></li>
+			<li data-theme="f" data-icon=""><a href="/beta/core/a/as.php?a=<?php echo urlencode($curArtist); ?>" class="hover"><?php echo $curArtist; ?></a></li>
 		<?php
 			}
 		}
@@ -56,11 +56,10 @@ function doSongs($letter,$q)
 ?>
 <!DOCTYPE html><html><head><meta charset="UTF-8"><title>Gorham Productions</title><meta name="viewport" id="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=10.0,initial-scale=1.0,maximum-scale=1, user-scalable=no"><link rel="stylesheet" href="http://GorhamProductions.com/karaoke/themes/GorhamPro.min.css" /> <?php echo file_get_contents('http://s-oke.com/beta/core/assets/jquery-include.php'); ?>
 </head>
-<body> 
-
-<div data-role="page" id="page" data-theme="f">
+<body>
+<div id="artistresult" data-role="page" data-theme="f">
 	<div data-role="header" data-position="fixed" data-theme="f">
-      <h1> <?php echo strtoupper($q); ?> - ARTISTS</h1>
+		<h1> <?php echo strtoupper($q); ?> - ARTISTS</h1>
 	</div>
 	<div id="back-button" class="centerer">
                 <h3><a href="/beta/core/login.php?r=1&ph=<?php echo $ph; ?>&guid=<?php echo n_digit_random(6);?>" data-role="button">Back To Main Menu</a></h3>
@@ -94,7 +93,7 @@ if ($found == 0) {
 	<div id="back-button" class="centerer">
                 <h3><a href="/beta/core/login.php?r=1&ph=<?php echo $ph; ?>&guid=<?php echo n_digit_random(6);?>" data-role="button">Back To Main Menu</a></h3>
         </div>
-<?php echo file_get_contents('../assets/footer.php'); ?>
+	<?php include_once('/var/www/html/beta/core/assets/footer.php'); ?>
 </div>
 </body>
 </html>

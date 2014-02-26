@@ -1,6 +1,6 @@
 <?php
 
-include '/var/www/html/beta/core/globals.php';
+include_once('/var/www/html/beta/core/globals.php');
 
 $url = startPage("fav");
 $ph=session_get('ph');
@@ -45,7 +45,13 @@ if (file_exists('/usr/logs/mysocialoke/venuesOn/'.$url['fullvenue'])) {
 
 ?>
 
-<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Gorham Productions</title><meta name="viewport" id="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=10.0,initial-scale=1.0,maximum-scale=1, user-scalable=no"><link rel="stylesheet" href="http://GorhamProductions.com/karaoke/themes/GorhamPro.min.css" /> <?php echo file_get_contents('http://s-oke.com/beta/core/assets/jquery-include.php'); ?>
+<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Gorham Productions</title><meta name="viewport" id="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=10.0,initial-scale=1.0,maximum-scale=1, user-scalable=no"><link rel="stylesheet" href="http://GorhamProductions.com/karaoke/themes/GorhamPro.min.css" /> <?php include '/var/www/html/beta/core/assets/jquery-include.php'; ?>
+<script type="javascript">
+function paintFooter()
+{
+	alert("YAY!");
+}
+</script>
 </head>
 </head><body> 
 
@@ -59,6 +65,6 @@ if (file_exists('/usr/logs/mysocialoke/venuesOn/'.$url['fullvenue'])) {
 	<div id="back-button" class="centerer">
 		<h3><a href="/beta/core/login.php?r=1&ph=<?php echo $ph; ?>&guid=<?php echo n_digit_random(6);?>" data-role="button">Back To Main Menu</a></h3>
 	</div>
-	<?php echo file_get_contents('../assets/footer.php'); ?>
+	<?php include_once('/var/www/html/beta/core/assets/footer.php'); ?>
 </div>
 </body></html>

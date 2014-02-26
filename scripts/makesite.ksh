@@ -12,6 +12,10 @@ sitedir=$rootdir/$1
 cp -r c core host venue themes facebook-php-sdk $sitedir
 rm -rf $sitedir/core/msgng/sms_handler.php
 sed -e "s:/core:/$1/core:g" $rootdir/core/main.php > $sitedir/core/main.php
+sed -e "s:/core:/$1/core:g" $rootdir/core/main_homediv.php > $sitedir/core/main_homediv.php
+sed -e "s:/core:/$1/core:g" $rootdir/core/main_songdiv.php > $sitedir/core/main_songdiv.php
+sed -e "s:/core:/$1/core:g" $rootdir/core/main_artistdiv.php > $sitedir/core/main_artistdiv.php
+sed -e "s:/core:/$1/core:g" $rootdir/core/main_browsediv.php > $sitedir/core/main_browsediv.php
 echo "<meta HTTP-EQUIV=\"REFRESH\" content=\"0; url=http://mysocialoke.com/$1/beta/$1/core/songs/songs.php#song\">" > /var/www/html/beta/$1/pk.htm
 sed -e "s:core:$1/core:g" $rootdir/core/msgng/reqconf.php > $sitedir/core/msgng/reqconf.php
 sed -e "s:/core/:/$1/core/:g" $rootdir/core/userinput/userinput.php > $sitedir/core/userinput/userinput.php

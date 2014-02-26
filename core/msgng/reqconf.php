@@ -1,6 +1,6 @@
 <?php
 
-include '/var/www/html/beta/core/globals.php';
+include_once('/var/www/html/beta/core/globals.php');
 
 $url = startPage("reqconf");
 $host = $url['host'];
@@ -13,9 +13,9 @@ if ($name_parm != null && $name_parm != '') {
 	$text = urldecode($text);
 	$textArr = explode(' by ',$text);
 	$songArr = array();
-	$songArr[0] = str_replace('%26','&',firstlast($textArr[0]));
-	$songArr[1] = str_replace('%26','&',firstlast($textArr[1]));
-	$rText = $songArr[0]." by ".$songArr[1];
+	$songArr[0] = firstlast($textArr[0]);
+	$songArr[1] = firstlast($textArr[1]);
+	$rText = str_replace('&amp;','&',str_replace('&apos;',"'",$songArr[0]." by ".$songArr[1]));
         $text = $name_parm." will be singing ".$rText;
 } else {
         header('Location: /beta/core/expired.php?u='.$url['fullvenue']);
@@ -52,10 +52,7 @@ if (isVenueOn($venue)) {
 	<div id="back-button" class="centerer">
                 <h3><a href="/beta/core/login.php?r=1&ph=<?php echo $ph; ?>&guid=<?php echo n_digit_random(6);?>" data-role="button">Back To Main Menu</a></h3>
         </div>
-	<?php echo file_get_contents('../assets/footer.php'); ?>
-</div>
-</body>
-</html>
+	<?php include_once('/var/www/html/beta/core/assets/footer.php'); ?>
 <?php
 
 $t4Url = $name_parm."||";
@@ -65,3 +62,6 @@ if (isset($flirt)) {
 }
 addToHistory($url['fullvenue'],$t4Url,$key);
 ?>
+</div>
+</body>
+</html>

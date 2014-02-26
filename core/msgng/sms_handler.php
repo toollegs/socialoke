@@ -2,7 +2,7 @@
 
 error_reporting(E_ALL);
 
-include '/var/www/html/beta/core/globals.php';
+include_once('/var/www/html/beta/core/globals.php');
 
 $knownHosts =  getKnownHosts();
 
@@ -539,18 +539,29 @@ function doRemind($thisHost)
 			$lineArr = array_map("trim",$lineArr);
 			if ($lineArr[0] == $dow) {
 				if (count($lineArr) == 3  && is_numeric($lineArr[2])) { 
-					$thisH = $lineArr[2];
-					$reminderTime = $thisH - 1;
-					if ($reminderTime < 0) {
-						$reminderTime = 23;
+					$thisTime = $lineArr[2];
+					$thisH = $thisTime;
+					$thisM = 0;
+					if (strlen($thisTime) == 4) {
+						$thisH = substr($thisTime,0,2);
+						$thisM = substr($thisTime,2);
 					}
-					echo "hour: ".$hour.", rt: ".$reminderTime."<br/>";
-					if ($hour == $reminderTime) {
+					$gTime = (intval($thisH)*100)+intval($thisM);
+					$reminderTime = $gTime - 100;
+					$reminderHour = substr($reminderTime,0,2);
+					$reminderMin = substr($reminderTime,2);
+					if ($reminderTime < 0) {
+						$reminderTime = 2300 + $thisM;
+					}
+					echo "intime: ".$lineArr[2].", gTime: ".$gTime.", rTime: ".$reminderTime.", rHour: ".$reminderHour.", rMin: ".$reminderMin.", thisH: ".$thisH.", thisM: ".$thisM.", rt: ".$reminderTime.": ";
+					$nowH = date('G');
+					echo "nowH: ".$nowH.", rHour: ".$reminderHour."<br/>";
+					if ($nowH == $reminderHour + 1) {
 						$fn = explode('/',$file);
 						$who[$fn[count($fn)-1]] = $lineArr[1];
-						echo "fire off that motherfucker!";
+						echo "Sending reminder for ".$file."<br/>";
 					} else {
-						echo "Don't fire off that motherfucker!";
+						echo "Not sending reminder for ".$file."<br/>";
 					}
 				}
 			}
@@ -569,7 +580,7 @@ function doRemind($thisHost)
 		} else {
 			if (!isset($thisHost) || $thisHost == null || $thisHost === '' || $thisHost === $host) {
 				$id = doSMS($knownHosts[$host],"To turn on Socialoke from your computer for tonight's gig at ".$gig.", click the Start button on your dashboard at http://s-oke.com/dboard/".$host);
-				echo "reminding ".$host." to turn that fucker on!<br/>";
+				echo "reminding ".$host." to turn on!<br/>";
 			}
 		}
 		file_put_contents("/usr/logs/mysocialoke/reminders",getDateForLog().": Sent to ".$host." for ".$gig.PHP_EOL,FILE_APPEND | LOCK_EX);

@@ -1,6 +1,6 @@
 <?php
 
-include '/var/www/html/beta/core/globals.php';
+include_once('/var/www/html/beta/core/globals.php');
 
 session_start();
 $l = session_get("l");
@@ -26,151 +26,16 @@ session_put('fid',$fid);
 $uri = startPage('main');
 $host = $uri['host'];
 $hostUpper = strtoupper($uri['host']);
+$songsForJs = file_get_contents('http://s-oke.com/beta/core/songs/songs.json');
 ?>
-<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Gorham Productions</title><meta name="viewport" id="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=10.0,initial-scale=1.0,maximum-scale=1, user-scalable=no"><link rel="stylesheet" href="http://GorhamProductions.com/karaoke/themes/GorhamPro.min.css" /> <?php echo file_get_contents('http://s-oke.com/beta/core/assets/jquery-include.php'); ?>
+<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Gorham Productions</title><meta name="viewport" id="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=10.0,initial-scale=1.0,maximum-scale=1, user-scalable=no"><?php echo file_get_contents('http://s-oke.com/beta/core/assets/jquery-include.php'); ?>
 </head>
-<body> 
-<div data-role="page" id="home" data-theme="f">
-	<div data-role="header" data-position="fixed" data-theme="f">
-    <h1>SOCIALOKE</h1>
-      <!--<img src="Gorham-Productions-logo-small.jpg"/>-->
-	</div>
-	<div data-role="content" data-theme="f">	
-	<p style="text-align:center; margin-top: 2px;"> Please select an option below to start exploring our gigantic song collection! </p>
-	<div id="s">
-	<form method=GET action="/beta/core/chooser.php?guid=<?php echo n_digit_random(4); ?>" id="mainForm" name="mainForm">
-		<fieldset>
-<!--
-			<legend><span>SEARCH</span></legend>
--->
-			<div data-role="fieldcontain" style="text-align:center;">
-			<input type="text" name="q" id="q" value="enter something" onclick="javascript: this.value = '';"/>
-			</div>
-			<fieldset data-role="controlgroup" data-type="horizontal" style="text-align:center;">
-				<input type="submit" name="b" id="b-1" value="SONG SEARCH" checked/>
-				<label for="b-1">SONG SEARCH</label>
-				<input type="submit" name="b" id="b-2" value="ARTIST SEARCH"/>
-				<label for="b-2">ARTIST SEARCH</label>
-			</fieldset>
-		</fieldset>
-	</form>
-	</div>
-	<a href="#browsediv" data-role="button" data-icon="star" data-transition="">BROWSE</a>
-	<a href="/beta/core/fav/fav.php" rel="external" data-role="button" data-icon="star" data-transition="">SUGGESTIONS FOR YOU!</a>
-	<a href="/beta/core/vote/vote.php?r=1" rel="external" data-role="button" data-icon="star" data-transition="">VOTECAST<img src="/beta/core/assets/new.jpg"/></a>
-	<a href="/beta/core/giglist.php?h=<?php echo $host; ?>" rel="external" data-role="button" data-icon="star" data-transition=""><?php echo $hostUpper; ?>'S OTHER GIGS!</a>
-<!--
-	<a href="/beta/core/feedback.php?ph=<?php echo session_get('ph'); ?>" data-role="button" data-transition="slide">FEEDBACK</a></div>
--->
-	</div>   
-	<?php echo file_get_contents('http://s-oke.com/beta/core/assets/footer.php?nb=1'); ?>
-</div>
-
-<div data-role="page" id="song" data-theme="f">
-	<div data-role="header" data-position="fixed" data-theme="f">
-    
-    <h1>SONGS</h1>
-<!--      <img src="Gorham-Productions-logo-small.jpg"/>
--->	</div>
-	<div id="back-button" class="centerer">
-                <h3><a href="/beta/core/login.php?r=1&ph=<?php echo $ph; ?>&guid=<?php echo n_digit_random(6);?>" data-role="button">Back To Main Menu</a></h3>
-        </div>
-	<div data-role="content" data-theme="f">	
-		<ul id="mylistviews" data-role="listview" data-theme="f">
-	  <li data-theme="f"><a rel="external" href="/beta/core/songs/songs.php?q=A" data-transition=""> A </a></li>
-          <li data-theme="f"><a rel="external" href="/beta/core/songs/songs.php?q=B" data-transition=""> B </a></li>
-          <li data-theme="f"><a rel="external" href="/beta/core/songs/songs.php?q=C" data-transition=""> C </a></li>
-          <li data-theme="f"><a rel="external" href="/beta/core/songs/songs.php?q=D" data-transition=""> D </a></li>
-          <li data-theme="f"><a rel="external" href="/beta/core/songs/songs.php?q=E" data-transition=""> E </a></li>
-          <li data-theme="f"><a rel="external" href="/beta/core/songs/songs.php?q=F" data-transition=""> F </a></li>
-          <li data-theme="f"><a rel="external" href="/beta/core/songs/songs.php?q=G" data-transition=""> G </a></li>
-          <li data-theme="f"><a rel="external" href="/beta/core/songs/songs.php?q=H" data-transition=""> H </a></li>
-          <li data-theme="f"><a rel="external" href="/beta/core/songs/songs.php?q=I" data-transition=""> I </a></li>
-          <li data-theme="f"><a rel="external" href="/beta/core/songs/songs.php?q=J" data-transition=""> J </a></li>
-          <li data-theme="f"><a rel="external" href="/beta/core/songs/songs.php?q=K" data-transition=""> K </a></li>
-          <li data-theme="f"><a rel="external" href="/beta/core/songs/songs.php?q=L" data-transition=""> L </a></li>
-          <li data-theme="f"><a rel="external" href="/beta/core/songs/songs.php?q=M" data-transition=""> M </a></li>
-          <li data-theme="f"><a rel="external" href="/beta/core/songs/songs.php?q=N" data-transition=""> N </a></li>
-          <li data-theme="f"><a rel="external" href="/beta/core/songs/songs.php?q=O" data-transition=""> O </a></li>
-          <li data-theme="f"><a rel="external" href="/beta/core/songs/songs.php?q=P" data-transition=""> P </a></li>
-          <li data-theme="f"><a rel="external" href="/beta/core/songs/songs.php?q=Q" data-transition=""> Q </a></li>
-          <li data-theme="f"><a rel="external" href="/beta/core/songs/songs.php?q=R" data-transition=""> R </a></li>
-          <li data-theme="f"><a rel="external" href="/beta/core/songs/songs.php?q=S" data-transition=""> S </a></li>
-          <li data-theme="f"><a rel="external" href="/beta/core/songs/songs.php?q=T" data-transition=""> T </a></li>
-          <li data-theme="f"><a rel="external" href="/beta/core/songs/songs.php?q=U" data-transition=""> U </a></li>
-          <li data-theme="f"><a rel="external" href="/beta/core/songs/songs.php?q=V" data-transition=""> V </a></li>
-          <li data-theme="f"><a rel="external" href="/beta/core/songs/songs.php?q=W" data-transition=""> W </a></li>
-          <li data-theme="f"><a rel="external" href="/beta/core/songs/songs.php?q=X" data-transition=""> X </a></li>
-          <li data-theme="f"><a rel="external" href="/beta/core/songs/songs.php?q=Y" data-transition=""> Y </a></li>
-          <li data-theme="f"><a rel="external" href="/beta/core/songs/songs.php?q=Z" data-transition=""> Z </a></li>
-          <li data-theme="f"><a rel="external" href="/beta/core/songs/songs.php?q=1" data-transition=""> 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 </a></li>
-        </ul></div>
-	<div id="back-button" class="centerer">
-                <h3><a href="/beta/core/login.php?r=1&ph=<?php echo $ph; ?>&guid=<?php echo n_digit_random(6);?>" data-role="button">Back To Main Menu</a></h3>
-        </div>
-	<?php echo file_get_contents('assets/footer.php'); ?>
-</div>
-
-
-<div data-role="page" id="artist" data-theme="f">
-	<div data-role="header" data-position="fixed" data-theme="f">
-		<h1>ARTISTS</h1>
-	</div>
-	<div id="back-button" class="centerer">
-                <h3><a href="/beta/core/login.php?r=1&ph=<?php echo $ph; ?>&guid=<?php echo n_digit_random(6);?>" data-role="button">Back To Main Menu</a></h3>
-        </div>
-	<div data-role="content" data-theme="f">	
-	<ul id="mylistviews" data-role="listview" data-theme="f">
-	  <li data-theme="f"><a rel="external" href="/beta/core/artist/artists.php?q=A" data-transition=""> A </a></li>
-          <li data-theme="f"><a rel="external" href="/beta/core/artist/artists.php?q=B" data-transition=""> B </a></li>
-          <li data-theme="f"><a rel="external" href="/beta/core/artist/artists.php?q=C" data-transition=""> C </a></li>
-          <li data-theme="f"><a rel="external" href="/beta/core/artist/artists.php?q=D" data-transition=""> D </a></li>
-          <li data-theme="f"><a rel="external" href="/beta/core/artist/artists.php?q=E" data-transition=""> E </a></li>
-          <li data-theme="f"><a rel="external" href="/beta/core/artist/artists.php?q=F" data-transition=""> F </a></li>
-          <li data-theme="f"><a rel="external" href="/beta/core/artist/artists.php?q=G" data-transition=""> G </a></li>
-          <li data-theme="f"><a rel="external" href="/beta/core/artist/artists.php?q=H" data-transition=""> H </a></li>
-          <li data-theme="f"><a rel="external" href="/beta/core/artist/artists.php?q=I" data-transition=""> I </a></li>
-          <li data-theme="f"><a rel="external" href="/beta/core/artist/artists.php?q=J" data-transition=""> J </a></li>
-          <li data-theme="f"><a rel="external" href="/beta/core/artist/artists.php?q=K" data-transition=""> K </a></li>
-          <li data-theme="f"><a rel="external" href="/beta/core/artist/artists.php?q=L" data-transition=""> L </a></li>
-          <li data-theme="f"><a rel="external" href="/beta/core/artist/artists.php?q=M" data-transition=""> M </a></li>
-          <li data-theme="f"><a rel="external" href="/beta/core/artist/artists.php?q=N" data-transition=""> N </a></li>
-          <li data-theme="f"><a rel="external" href="/beta/core/artist/artists.php?q=O" data-transition=""> O </a></li>
-          <li data-theme="f"><a rel="external" href="/beta/core/artist/artists.php?q=P" data-transition=""> P </a></li>
-          <li data-theme="f"><a rel="external" href="/beta/core/artist/artists.php?q=Q" data-transition=""> Q </a></li>
-          <li data-theme="f"><a rel="external" href="/beta/core/artist/artists.php?q=R" data-transition=""> R </a></li>
-          <li data-theme="f"><a rel="external" href="/beta/core/artist/artists.php?q=S" data-transition=""> S </a></li>
-          <li data-theme="f"><a rel="external" href="/beta/core/artist/artists.php?q=T" data-transition=""> T </a></li>
-          <li data-theme="f"><a rel="external" href="/beta/core/artist/artists.php?q=U" data-transition=""> U </a></li>
-          <li data-theme="f"><a rel="external" href="/beta/core/artist/artists.php?q=V" data-transition=""> V </a></li>
-          <li data-theme="f"><a rel="external" href="/beta/core/artist/artists.php?q=W" data-transition=""> W </a></li>
-          <li data-theme="f"><a rel="external" href="/beta/core/artist/artists.php?q=X" data-transition=""> X </a></li>
-          <li data-theme="f"><a rel="external" href="/beta/core/artist/artists.php?q=Y" data-transition=""> Y </a></li>
-          <li data-theme="f"><a rel="external" href="/beta/core/artist/artists.php?q=Z" data-transition=""> Z </a></li>
-          <li data-theme="f"><a rel="external" href="/beta/core/artist/artists.php?q=1" data-transition=""> 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, ? </a></li>
-        </ul>
-	</div>
-	<div id="back-button" class="centerer">
-                <h3><a href="/beta/core/login.php?r=1&ph=<?php echo $ph; ?>&guid=<?php echo n_digit_random(6);?>" data-role="button">Back To Main Menu</a></h3>
-        </div>
-	<?php echo file_get_contents('assets/footer.php'); ?>
-</div>
-<div data-role="page" id="browsediv" data-theme="f">
-	<div data-role="header" data-position="fixed" data-theme="f">
-		<h1>BROWSE</h1>
-	</div>
-	<div data-role="content" data-theme="f">	
-	<ul id="mylistviews" data-role="listview" data-theme="f">
-		<li data-theme="f"><a rel="external" href="#artist" data-transition=""> Artist</a></li>
-		<li data-theme="f"><a rel="external" href="#song" data-transition=""> Song </a></li>
-		<li data-theme="f"><a rel="external" href="/beta/core/popular/popular.php" data-transition=""> Most Popular </a></li>
-		<li data-theme="f"><a rel="external" href="/beta/core/duets/duets.php" data-transition=""> Duets </a></li>
-		<li data-theme="f"><span>Genre<img src="/beta/core/assets/coming-soon.jpg"/></span></li>
-	</ul>
-	</div>
-	<div id="back-button" class="centerer">
-                <h3><a href="/beta/core/login.php?r=1&ph=<?php echo $ph; ?>&guid=<?php echo n_digit_random(6);?>" data-role="button">Back To Main Menu</a></h3>
-        </div>
-	<?php echo file_get_contents('assets/footer.php'); ?>
-</div>
+<body>
+<?php include 'main_homediv.php'; ?>
+<?php include 'main_songdiv.php'; ?>
+<?php include 'main_artistlettersdiv.php'; ?>
+<?php include 'main_songlettersdiv.php'; ?>
+<?php include 'main_browsediv.php'; ?>
+<?php include 'sm/singitdiv.php'; ?>
+<?php include 'artist/asdiv.php'; ?>
 </body></html>
