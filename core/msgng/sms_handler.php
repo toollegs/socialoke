@@ -128,12 +128,25 @@ function processAdminReq($from,$crumbs)
 			break;
 		case "remind":
 			if (isset($crumbs[1])) {
-				$thisHost = $crumbs[1];
-				doRemind($thisHost);
-			} else {
-				doRemind();
+				switch ($crumbs[1]) {
+					case "host":
+						if (isset($crumbs[2])) {
+							$thisHost = $crumbs[2];
+							doRemindHost($thisHost);
+						} else {
+							doRemindHost();
+						}
+						break;
+					case "cust":
+						if (isset($crumbs[2])) {
+							$thisCust = $crumbs[2];
+							doRemindCust($thisCust);
+						} else {
+							doRemindCust();
+						}
+						break;
+				}
 			}
-			break;
 	}
 }
 
@@ -525,7 +538,7 @@ function turnOffMsgng()
 	}
 }
 
-function doRemind($thisHost)
+function getTonightsGigs()
 {
 	global $knownHosts;
 	$dow = strtolower(date('D'));
@@ -553,21 +566,25 @@ function doRemind($thisHost)
 					if ($reminderTime < 0) {
 						$reminderTime = 2300 + $thisM;
 					}
-					echo "intime: ".$lineArr[2].", gTime: ".$gTime.", rTime: ".$reminderTime.", rHour: ".$reminderHour.", rMin: ".$reminderMin.", thisH: ".$thisH.", thisM: ".$thisM.", rt: ".$reminderTime.": ";
 					$nowH = date('G');
-					echo "nowH: ".$nowH.", rHour: ".$reminderHour."<br/>";
 					if ($nowH == $reminderHour + 1) {
 						$fn = explode('/',$file);
 						$who[$fn[count($fn)-1]] = $lineArr[1];
-						echo "Sending reminder for ".$file."<br/>";
-					} else {
-						echo "Not sending reminder for ".$file."<br/>";
 					}
 				}
 			}
 		}
 
 	}
+	
+	return $who;
+}
+
+function doRemindHost($thisHost)
+{
+	global $knownHosts;
+	$who = getTonightsGigs();
+	var_dumper($who);
 	foreach($who as $host => $gig) {
 		echo "host: ".$host.", gig: ".$gig."<br/>";
 		$files = glob('/usr/logs/mysocialoke/venuesOn/".$host."*'); // get all file names
@@ -585,5 +602,56 @@ function doRemind($thisHost)
 		}
 		file_put_contents("/usr/logs/mysocialoke/reminders",getDateForLog().": Sent to ".$host." for ".$gig.PHP_EOL,FILE_APPEND | LOCK_EX);
 	}
-	var_dumper($who);
+}
+
+function doRemindCust()
+{
+	$pn = getCustPNsFromArchives();
+	var_dumper($pn);
+}
+
+function getCustPNsFromArchives()
+{
+        $pn = array();
+        $f = glob("/usr/logs/mysocialoke/archives/*");
+        foreach($f as $hg) {
+                $g = glob($hg."/*");
+                if (count($g) > 0) {
+                        foreach($g as $afile) {
+				$vDirArr = explode('/',$afile);
+				$hvArr = explode('-',$vDirArr[count($vDirArr)-1]);
+				if (isset($hvArr[1])) {
+					$venueArr = explode('_',$hvArr[1]);
+					$venue = $venueArr[0];
+                        	        $afileLines = file($afile);
+                                	foreach($afileLines as $line) {
+                                        	$aflArr = explode("||",$line);
+	                                        for($i = 0; $i < 3; $i++) {
+							if (isset($aflArr[$i])) {
+	        	                                        $aflArr[$i] = str_replace('-','',$aflArr[$i]);
+        	        	                                $aflArr[$i] = str_replace(' ','',$aflArr[$i]);
+                	        	                        if (!is_numeric($aflArr[$i])) {
+									$realPN = base64_decode($aflArr[$i]);
+									if (is_numeric($realPN)) {
+										if (!isset($pn[$realPN])) {
+											$pn[$realPN] = array();
+										}
+										if (!in_array($venue,$pn[$realPN])) {
+											echo "adding ".$venue." to ".$realPN."<br/>";
+											$pn[$realPN][] = $venue;
+										}
+        	        	                        	                break;
+									}
+								}
+                        	                        }
+						}
+                                        }
+                                }
+                        }
+                }
+        }
+        ksort($pn);
+	var_dump($pn);
+
+	return $final;
 }

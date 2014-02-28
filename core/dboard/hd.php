@@ -171,7 +171,9 @@ function paintOffLabel()
 						<?php echo paintRegCount(); ?>
 						<?php echo paintGigCode(); ?>
 					</div>
+<!--
 					<?php echo paintStopGigButton(); ?>
+-->
 				</div>
 			<?php } else if (trim($tonightsVenue) != "off") { ?>
 				<div id="gigdead">

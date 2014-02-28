@@ -15,7 +15,7 @@ foreach($f as $daygig) {
 		$dayVal = "off";
 	}
 	$fname = "/usr/logs/mysocialoke/giglists/".$host.".new";
-	file_put_contents($fname,$day.",".$dayVal.PHP_EOL, FILE_APPEND | LOCK_EX);
+	file_put_contents($fname,$day.",".$dayVal.",20".PHP_EOL, FILE_APPEND | LOCK_EX);
 }
 unlink("/usr/logs/mysocialoke/giglists/".$host);
 rename("/usr/logs/mysocialoke/giglists/".$host.".new", "/usr/logs/mysocialoke/giglists/".$host);
