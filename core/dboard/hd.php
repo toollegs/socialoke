@@ -77,9 +77,16 @@ function getScheduleDiv() {
 
 function makeGigSelect($sName,$dayStr,$i)
 {
-	global $venues, $gigsFile;
+	global $venues, $gigsFile, $tonightsVenue;
 	$ret = "<select name=\"".$sName."\" id=\"d-".$sName."\">";	
 	$ret .= "<option value=\"\">SELECT ".$dayStr." VENUE</option>";
+	$todayRet = '<p style="text-align:center;font-weight:bold;width=100%">'.strtoupper($tonightsVenue)." IS ON!</p>";
+	$nowDayLower = strtolower(date('D'));
+	$thisDayLower = strtolower(substr($dayStr,0,3));
+	
+	if ($nowDayLower === $thisDayLower && isVenueOn($tonightsVenue)) {
+		return $todayRet;
+	}
 	foreach($venues as $venue) {
 	
 		$venue=trim($venue);
@@ -171,9 +178,7 @@ function paintOffLabel()
 						<?php echo paintRegCount(); ?>
 						<?php echo paintGigCode(); ?>
 					</div>
-<!--
 					<?php echo paintStopGigButton(); ?>
--->
 				</div>
 			<?php } else if (trim($tonightsVenue) != "off") { ?>
 				<div id="gigdead">

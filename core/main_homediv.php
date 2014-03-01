@@ -1,4 +1,4 @@
-<div data-role="page" id="home" dataOA-theme="f">
+<div data-role="page" id="home" data-theme="f">
 	<div data-role="header" data-position="fixed" data-theme="f">
 		<h1>SOCIALOKE</h1>
 	</div>

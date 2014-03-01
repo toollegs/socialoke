@@ -19,6 +19,7 @@ function get_live()
 {
 	global $jVenues;
 	$f = glob("/usr/logs/mysocialoke/venuesOn/*");
+	var_dumper($f);
 	foreach($f as $onVenue) {
 		$fArr = explode('-',trim($onVenue));
 		$vArr = explode('_',$fArr[1]);

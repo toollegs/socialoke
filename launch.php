@@ -1,14 +1,13 @@
 <?php
 
-$f = file_get_contents("http://s-oke.com/venue/live");
+$f = file_get_contents("/venue/live");
 
 $json = json_decode($f,true);
 $ph = $_GET['ph'];
 ?>
 <html><head><title>SOCIALOKE LAUNCHER</title>
 <meta name="viewport" id="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=10.0,initial-scale=1.0,maximum-scale=1, user-scalable=no">
-<link rel="stylesheet" href="http://www.GorhamProductions.com/karaoke/themes/GorhamPro.min.css" />
-<?php echo file_get_contents('core/assets/jquery-include.js'); ?>
+<?php echo file_get_contents('/beta/core/assets/jquery-include.js'); ?>
 <script type="text/javascript">
 $(document).ready(function() {
 	$('#v').on('change', function() {

@@ -291,7 +291,7 @@ function processCustReq($from,$crumbs,$type)
 		case "list":
 		case "sing":
 		case "reg":
-			echo "doing reister..";
+			echo "doing register..";
 			doRegister($crumbs,$from);
 			break;
 		case "song":
@@ -368,11 +368,13 @@ function doRegister($crumbs,$from)
 	
 	if ($fullVenue != FALSE) {
 		$venueOn = isVenueOn($venue);
-		echo "venueOn: ".$venueOn;
+		$url = "http://s-oke.com/gig/".$venue."?ph=".base64_encode($from);
+		echo "venueOn: ".$venueOn."<br/>";
+		echo "link: ".$url."<br/>";
 		if ($venueOn != FALSE) {
 			echo $from.": ".$venue." is on, doing sms...";
 			$text_parm="Socialoke with ".strtoupper($host)." at ".strtoupper($venue)." begins here: ";
-			$text_parm.="http://s-oke.com/gig/".$venue."?ph=".base64_encode($from);
+			$text_parm.=$url;
 			doSMS($from,$text_parm);
 			$logstr=getDateForLog()."||".base64_encode($from)." registered with ||".getVenueForHandler($venue);
 			$logstr.="\n";

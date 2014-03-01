@@ -9,7 +9,7 @@ if (isset($_GET['sb'])) {
 	exit();
 }
 if (!isset($l)) {
-	header("Location: http://s-oke.com/beta/core/login.php");
+	header("Location: http://s-oke.com/beta/core/login.php?ph=".session_get('ph'));
 }
 
 session_unset();
