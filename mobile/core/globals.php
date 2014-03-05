@@ -1,6 +1,6 @@
 <?php
 
-$nosms=1;
+$nosms=0;
 $destphones='16179706735';
 
 function getKnownHosts()
