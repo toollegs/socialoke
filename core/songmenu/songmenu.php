@@ -25,7 +25,7 @@ $smsstring = str_replace("'",'&apos;',$smsstring);
 	</div>
 	<div data-role="content"  data-theme="f">	
 		<ul id="mylistview" data-role="listview" data-theme="f">
-			<li data-theme="f"><a href="../ui/ui.php?t=<?php echo urlencode($smsstring); ?>" class="hover">Sing it!</a></li>
+			<li data-theme="f"><a href="../ui/ui.php?t=<?php echo urlencode($smsstring); ?>" data-role="button">SIGN UP TO SING IT!</a></li>
 <!--
 			<li data-theme="f" id="atf"><a href="#" id="<?php echo urlencode($smsstring); ?>" class="hover">Add To Favorites</a></li>
 -->

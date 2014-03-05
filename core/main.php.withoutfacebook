@@ -36,6 +36,7 @@ $songsForJs = file_get_contents('http://s-oke.com/beta/core/songs/songs.json');
 <?php include 'main_artistlettersdiv.php'; ?>
 <?php include 'main_songlettersdiv.php'; ?>
 <?php include 'main_browsediv.php'; ?>
+<?php include 'main_searchdiv.php'; ?>
 <?php include 'sm/singitdiv.php'; ?>
 <?php include 'artist/asdiv.php'; ?>
 </body></html>

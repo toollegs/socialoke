@@ -59,6 +59,9 @@ function paintFooter()
 	<div data-role="header" data-position="fixed" data-theme="f">
       	<h1>SUGGESTIONS</h1>
 	</div>
+	<div id="back-button" class="centerer">
+                <h3><a href="/beta/core/login.php?r=1&ph=<?php echo $ph; ?>&guid=<?php echo n_digit_random(6);?>" data-role="button">Back To Main Menu</a></h3>
+        </div>
 	<div data-role="content" data-theme="f">	
 		<?php echo $favsLIs; ?>
 	</div>

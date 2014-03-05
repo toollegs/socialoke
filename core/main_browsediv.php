@@ -4,8 +4,9 @@
 	</div>
 	<div data-role="content" data-theme="f">	
 	<ul id="mylistviews" data-role="listview" data-theme="f">
-		<li data-theme="f"><a href="#artistletters" data-transition=""> Artist</a></li>
-		<li data-theme="f"><a href="#songletters" data-transition=""> Song </a></li>
+		<li data-theme="f"><a href="/beta/core/fav/fav.php" data-role="button" data-transition="">SUGGESTIONS</a></li>
+		<li data-theme="f"><a href="#artistletters" data-transition="">ARTISTS</a></li>
+		<li data-theme="f"><a href="#songletters" data-transition="">SONGS</a></li>
 <!--
 		<li data-theme="f"><a rel="external" href="/beta/core/popular/popular.php" data-transition=""> Most Popular </a></li>
 		<li data-theme="f"><a rel="external" href="/beta/core/duets/duets.php" data-transition=""> Duets </a></li>

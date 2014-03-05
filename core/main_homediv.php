@@ -4,21 +4,8 @@
 	</div>
 	<div data-role="content" data-theme="f">	
 		<p style="text-align:center; margin-top: 2px;"> Please select an option below to start exploring our gigantic song collection! </p>
-		<div id="s">
-			<form method=GET action="/beta/core/chooser.php?guid=<?php echo n_digit_random(4); ?>" id="mainForm" name="mainForm">
-				<fieldset>
-					<div data-role="fieldcontain" style="text-align:center;">
-					<input type="text" name="q" id="q" value="enter something" onclick="javascript: this.value = '';"/>
-					</div>
-					<fieldset data-role="controlgroup" data-type="horizontal" style="text-align:center;">
-						<input type="submit" name="b" id="b-1" value="SONG SEARCH"/>
-						<input type="submit" name="b" id="b-2" value="ARTIST SEARCH"/>
-					</fieldset>
-				</fieldset>
-			</form>
-		</div>
-		<a href="#browse" data-role="button" rel="external">BROWSE</a>
-		<a href="/beta/core/fav/fav.php" rel="external" data-role="button" data-transition="">SUGGESTIONS FOR YOU!</a>
+		<a href="#browse" data-role="button" rel="external">BROWSE SONGBOOK</a>
+		<a href="#search" data-role="button" rel="external">SEARCH SONGBOOK</a>
 		<a href="/beta/core/vote/vote.php?r=1" rel="external" data-role="button" data-transition="">VOTECAST</a>
 		<a href="/beta/core/giglist.php?h=<?php echo $host; ?>" rel="external" data-role="button" data-transition=""><?php echo $hostUpper; ?>'S OTHER GIGS!</a>
 	</div>   

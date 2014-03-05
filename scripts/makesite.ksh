@@ -39,6 +39,12 @@ sed -e "s:/core/:/$1/core/:g" $rootdir/core/songmenu/songmenu.php > $sitedir/cor
 sed -e "s:/core/:/$1/core/:g" $rootdir/core/addfav/addfav.php > $sitedir/core/addfav/addfav.php
 sed -e "s:/core/:/$1/core/:g" $rootdir/core/artist/asong.php > $sitedir/core/artist/asong.php
 sed -e "s:/core/:/$1/core/:g" $rootdir/core/feedback.php > $sitedir/core/feedback.php
+sed -e "s:/core/:/$1/core/:g" $rootdir/core/main_homediv.php > $sitedir/core/main_homediv.php
+sed -e "s:/core/:/$1/core/:g" $rootdir/core/main_artistlettersdiv.php > $sitedir/core/main_artistlettersdiv.php
+sed -e "s:/core/:/$1/core/:g" $rootdir/core/main_songlettersdiv.php > $sitedir/core/main_songlettersdiv.php
+sed -e "s:/core/:/$1/core/:g" $rootdir/core/main_browsediv.php > $sitedir/core/main_browsediv.php
+sed -e "s:/core/:/$1/core/:g" $rootdir/core/main_searchdiv.php > $sitedir/core/main_searchdiv.php
+
 chown -R apache:apache $sitedir
 chmod -R 777 $sitedir/host
 chmod -R 777 $sitedir/venue
