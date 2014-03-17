@@ -1,0 +1,501 @@
+<?php
+
+error_reporting(E_ALL);
+
+include '/var/www/html/nextgen/core/globals.php';
+
+$knownHosts =  getKnownHosts();
+
+$knownVenues = getKnownVenues();
+
+$knownCrumbs = array ("help");
+
+$knownAdmin = array("add","del","msgon","msgoff","remind");
+
+$knownEng = array("sing","reg","list");
+
+if (isset($_GET['fromCrontab']) && $_GET['fromCrontab'] =='yes') {
+	doStopForNight();
+	exit();
+}
+$from = $_GET['from'];
+$text = $_GET['text'];
+$from = strtolower($from);
+$text = strtolower($text);
+$logstr=date(DATE_RFC2822)."||".base64_encode($from)."||".$text."\n";
+file_put_contents('/usr/logs/mysocialoke/core/searches.log',$logstr, FILE_APPEND | LOCK_EX);
+$crumbs = array('fav');
+if ($text != null && $text != '') {
+	$crumbs = explode(' ',$text);
+	foreach($crumbs as $crumb) {
+		$crumb = strtolower($crumb);
+	}
+}
+if (in_array($crumbs[0],$knownAdmin)) {
+	processAdminReq($from, $crumbs);
+	return;
+}
+if (isset($knownHosts[$crumbs[0]])) {
+	processHostReq($from,$crumbs);
+}
+if (in_array($crumbs[0],$knownVenues)) {
+	$crumbs[0] = $knownVenues[$crumbs[0]];
+	processCustReq($from,$crumbs,"v");
+}
+$first4 = substr($crumbs[0],0,4);
+if (in_array($first4,$knownEng)) {
+	if (count($crumbs) == 1) {
+		$code = substr($crumbs[0],4);
+		$crumbs[0] = 'sing';
+		$crumbs[1] = $code;
+	}
+	processCustReq($from,$crumbs,"c");
+}
+
+if (in_array($crumbs[0], $knownCrumbs)) {
+	doCommands($from,strtolower($venue));
+}
+
+function processAdminReq($from,$crumbs)
+{
+	global $knownVenues, $knownHosts;
+
+	if ($from != "16179706735" 
+	&& $from != "15083205592"
+	&& $from != "16178661155"
+	&& $from != "18607481198") {
+		return;
+	}
+	switch($crumbs[0]) {
+		case "add":
+
+			$cmd = strtolower($crumbs[0]);
+			$host = strtolower($crumbs[1]);
+			$venue = strtolower($crumbs[2]);
+			$ph = strtolower($crumbs[3]);
+			if (!in_array($venue,$knownVenues)) {
+				return;
+			}
+			if (strlen($ph) == 10) {
+			$ph = '1'.$ph;
+			} 
+			if (strlen($ph) == 11) {	
+				addHost($ph,$venue,$host);
+			} else {
+				return;
+			}
+			break;
+		case "del":
+			echo $crumbs[1]."\.\.\. ".$crumbs[3];
+			echo "phone: ".$knownHosts[$crumbs[1]].', from: '.$from;
+			if (isset($knownHosts[$crumbs[1]]) && strcmp(trim($knownHosts[$crumbs[1]]),$from) == 0) {
+				echo "calling delHost...";
+				delHost($from,$crumbs[1]);
+			}
+			break;
+		case "msgon":
+			turnOnMsgng();
+			break;
+		
+		case "msgoff":
+			turnOffMsgng();
+			break;
+		case "remind":
+			doRemind();
+			break;
+	}
+}
+
+function addHost($from,$venue,$host)
+{
+	global $knownHosts;
+
+	echo "host: ".$host;
+	$day = strtolower(date('D'));
+	echo "day: ".$day;
+
+// Check if host with this name already exists, and if so, increment a counter
+// until the host no longer exists
+
+	$f = file("/var/www/html/nextgen/core/knownHosts");
+	$gothost = 0;
+	$i = '';
+	while ($gothost == 0) {
+		$changed = 0;
+		foreach ($f as $line) {
+			if (startsWith($line,$host.",")) {
+				if ($i == '') {
+					$i = 2;
+				} else {
+					$i += 1;
+				}
+				$host = $host.$i;
+				$changed = 1;
+				break;
+			}
+		}
+		if ($changed == 0) {
+			break;
+		}
+	}
+	echo "realHost: ".$host;
+	file_put_contents("/var/www/html/nextgen/core/knownHosts",$host.",".$from.PHP_EOL, FILE_APPEND | LOCK_EX);
+	$knownHosts = getKnownHosts();
+
+	file_put_contents("/usr/logs/mysocialoke/giglists/".$host,$venue.PHP_EOL);
+	$farr = file("/var/www/html/nextgen/core/basegiglist");
+	foreach($farr as $line) {
+		$lineOut = $line;
+		echo "val: ".startsWith($line,$day)." ";
+		if (startsWith($line,$day)) {
+			$lineOut = $day.','.$venue.PHP_EOL;
+		}	
+		file_put_contents("/usr/logs/mysocialoke/giglists/".$host,$lineOut,FILE_APPEND | LOCK_EX);
+	}
+	createEvent($from,$venue,$host);
+}
+
+function delHost($from,$host)
+{
+	global $knownHosts;
+
+	echo "in delHost.. ";
+	$lines = file("/var/www/html/nextgen/core/knownHosts");
+	echo "line count: ".count($lines);
+	var_dump($lines);
+	unlink("/var/www/html/nextgen/core/knownHosts");
+	$outlines = array();
+	foreach($lines as $line) {
+		$nv = explode(',',trim($line));
+		if (strcmp($nv[0],$host) != 0 || strcmp($nv[1],$from)) {
+			file_put_contents('/var/www/html/nextgen/core/knownHosts',$$nv[0].','.$nv[1], FILE_APPEND | LOCK_EX);
+		}
+	}
+}
+
+	
+function createEvent($from,$venue,$host)
+{
+	global $knownHosts;
+
+	$today = date('mdy');
+	$tomorrow = date('mdy',strtotime("+1 day"));
+	$code = n_digit_random(4);
+	$symLink=$host.'-'.$venue.'_'.$today.','.$code;
+	$symLinkTomorrow=$host.'-'.$venue.'_'.$tomorrow.','.$code;
+	shell_exec('/var/www/html/nextgen/scripts/makesite.ksh '.$symLink.' '.$knownHosts[$host]);
+	chmod('/var/www/html/nextgen/'.$symLink,0777);
+	symlink('/var/www/html/nextgen/'.$symLink,'/var/www/html/nextgen/'.$symLinkTomorrow);
+
+	chmod('/var/www/html/nextgen/'.$symLinkTomorrow,0777);
+	echo "venue: ".$venue;
+	symlink('/var/www/html/nextgen/'.$symLink,'/var/www/html/'.$venue);
+	chmod('/var/www/html/'.$venue,0777);
+	file_put_contents('/usr/logs/mysocialoke/venuesOn/'.$symLink,'');
+	touch('/usr/logs/mysocialoke/votes/'.$symLink);
+	symlink('/usr/logs/mysocialoke/venuesOn/'.$symLink,'/usr/logs/mysocialoke/venuesOn/'.$symLinkTomorrow);
+	echo "<a href='http://s-oke.com/gig/".$venue."?ph=".base64_encode($from)."'>main link</a>\n<br/>";
+	$text = $host." at ".$venue." is now ON. Tonight's code is: ".$code.". Open this link on your computer to use your dashboard: http://s-oke.com/host-dashboard/".$host;
+	echo "<br/>".$text."</br>";
+
+	echo "About to doSMS................";
+	doSMS($from,$text);
+	if ($from == '16179706735' && $host != 'jeff') {
+		doSMS($knownHosts[$host],$text);
+	}
+}
+
+function processCustReq($from,$crumbs,$type)
+{
+	if ($type === "c") {
+		$comp = $crumbs[0];
+	} else if ($type === "v") {
+		$comp = $crumbs[1];
+	}
+	switch ($comp) {
+		case "list":
+		case "sing":
+		case "reg":
+			doRegister($crumbs,$from);
+			break;
+		case "song":
+		case "songs":
+			$venue = $crumbs[0];
+			$subArray=array_slice($crumbs,2,count($crumbs)-1);
+			$songReq = implode(' ',$subArray);
+			echo "songReq: ".$songReq;
+			doSongSearch($venue,$from,$songReq);
+			break;
+		case "artist":
+		case "artists":
+			$venue = $crumbs[0];
+			$subArray=array_slice($crumbs,2,count($crumbs)-1);
+			$songReq = implode(' ',$subArray);
+			doArtistSearch($venue,$from,$songReq);
+			break;
+		default:
+			break;
+	}
+}
+
+
+function processHostReq($from,$crumbs)
+{
+	echo "from: ".$from;
+	var_dump($crumbs);
+	$host = strtolower($crumbs[0]);
+	$venue = strtolower($crumbs[1]);
+	if ($venue == 'help') {
+		echo "doing help...";
+		doHelp($from,$host);
+		return;
+	}
+	switch ($crumbs[2]) {
+		case "start":
+		case "on":
+			doStart($from,$venue,$host);
+			break;
+		case "stop":
+		case "off":
+			echo "about to doStop";
+			doStop($from,$venue,$host);
+			break;
+		default:
+			break;
+	}
+}
+
+function doRegister($crumbs,$from)
+{
+	$logstr='';
+		
+	if (count($crumbs) == 2) {
+		$code = $crumbs[1];
+		$venue = $code;
+	} else {
+		$venue = $crumbs[0];
+		$code = $crumbs[2];
+	}
+	$fullVenue = getVenueForHandler($venue);
+	echo $fullVenue;
+	$comp = ','.$code;
+	if (!endsWith($fullVenue,','.$code)) {
+		echo "returning...";
+		return;
+	} else {
+		echo "we good!";
+	}
+	
+	if ($fullVenue != FALSE) {
+		$text_parm="Socialoke begins here: ";
+		$text_parm.="http://s-oke.com/gig/".$venue."?ph=".base64_encode($from);
+		$venueOn = isVenueOn($venue);
+		echo "venueOn: ".$venueOn;
+		if ($venueOn != FALSE) {
+			echo $from.": ".$venue." is on, doing sms...";
+			doSMS($from,$text_parm);
+			$logstr= base64_encode($from)." registered with ||".$venue."|| at ";
+			$logstr.=date(DATE_RFC2822)."\n";
+		}
+	} else {
+		echo $venue." is NOT on!";
+	}
+	file_put_contents('/usr/logs/mysocialoke/core/msgng/registered.log',$logstr, FILE_APPEND | LOCK_EX);
+	doOutput($logstr);
+}
+
+function doSongSearch($venue,$from,$songReq)
+{	
+	$text = '';
+	$fullVenue = getVenueForHandler($venue);
+	if ($fullVenue != FALSE) {
+		$text = "SEARCH RESULTS FOR SONG ".strtoupper($songReq).": http://s-oke.com/nextgen/".$fullVenue."/core/songs/songs.php?q=".urlencode($songReq)."&ph=".base64_encode($from);
+		echo $text;
+
+		doSMS($from,$text);
+		echo $from." searched song ".$songReq." at ".$venue."<br/>";
+	} else {
+		echo $venue." not available!";
+	}
+}
+
+function doArtistSearch($venue,$from,$songReq)
+{
+	echo $from." searched ".$songReq." at ".$venue."<br/>";
+	$fullVenue = getVenueForHandler($venue);
+	if ($fullVenue != FALSE) {
+		$text = "SEARCH RESULTS FOR ARTIST ".strtoupper($songReq).": http://s-oke.com/nextgen/".$fullVenue."/core/artist/artists.php?q=".urlencode($songReq)."&ph=".base64_encode($from);
+		echo $text;
+
+		doSMS($from,$text);
+		echo $from." searched artist ".$songReq." at ".$venue."<br/>";
+	} else {
+		echo $venue." not available!";
+	}
+	
+}
+
+function doStart($from,$venue,$host)
+{
+	global $knownHosts, $knownVenues;
+
+	if ($knownHosts[$host] == $from || $from == '16179706735') {
+		if (in_array($venue,$knownVenues)) {
+			createEvent($from,$knownVenues[$venue],$host);
+		}
+	}
+}
+
+function dropEvent($from,$venue,$host)
+{
+	$symLink=$host.'-'.$venue;
+	$ret = shell_exec('ls /usr/logs/mysocialoke/venuesOn/'.$symLink.'* | head -1');
+	if ($ret == null || $ret == '') {
+		echo "Venue not on: ".$venue." for ".$host;
+		return;
+	}
+	$ret = shell_exec('mkdir -p /usr/logs/mysocialoke/archives/'.$symLink);
+	$retArr = explode('/',$ret);
+	$realRet = trim($retArr[count($retArr)-1]);
+	echo "first ret: ".$realRet;
+	$f = file(trim($ret));
+	foreach ($f as $line) {
+		echo "line: ".$line;
+		echo "the file:<br/>/usr/logs/mysocialoke/archives/".$symLink."/".$realRet;
+		file_put_contents('/usr/logs/mysocialoke/archives/'.$symLink.'/'.$realRet,$line,FILE_APPEND | LOCK_EX);
+	}
+	$f = file('/usr/logs/mysocialoke/votes/'.$realRet.'.log');
+	$vfnArr = explode('_',$realRet);
+	$vfn='/usr/logs/mysocialoke/archives/'.$symLink.'/votes.'.$vfnArr[1];
+	foreach ($f as $line) {
+		file_put_contents($vfn,$line,FILE_APPEND | LOCK_EX);
+	}
+	$ret = shell_exec('rm -rf /usr/logs/mysocialoke/votes/'.$realRet.'.log');
+	$ret = shell_exec('rm -rf /var/www/html/nextgen/'.$symLink.'*');
+	$ret = shell_exec('rm -rf /usr/logs/mysocialoke/venuesOn/'.$symLink.'*');
+	unlink('/var/www/html/'.$venue);
+	doSMS($from,$host." at ".$venue." is now OFF");
+}
+
+function doStop($from,$venue,$host)
+{
+	global $knownHosts, $knownVenues;
+
+	echo 'venue: '.$venue.', host: '.$host;	
+	if ($knownHosts[$host] == $from || $from == '16179706735') {
+		if (in_array($venue,$knownVenues)) {
+			echo "ima drop it like its hot!";
+			dropEvent($from,$venue,$host);
+		}
+	}
+}
+
+function doStopForNight()
+{
+	$files = glob('/usr/logs/mysocialoke/venuesOn/*'); // get all file names
+	foreach($files as $file){ // iterate files
+		if(is_file($file)) {
+    			unlink($file); // delete file
+		}
+	}
+}
+
+function doHelp($from,$venue)
+{
+	switch($from)
+	{
+		case "15083205592":
+			$comm="admin: add <h> <v> <ph>, del <h> <v> <ph>, host: dan <v> on, dan <v> off; customer: <v> list, <v> song <string>, <v> artist <string>";	
+			break;
+		case "18607481198":
+			$comm="admin: add <h> <v> <ph>, del <h> <v> <ph>, host: pam <v> on, pam <v> off; customer: <v> list, <v> song <string>, <v> artist <string>";	
+			break;
+		case "16179706735": 
+			$comm="admin: add <h> <v> <ph>, del <h> <v> <ph>, host: jeff <v> on, jeff <v> off; customer: <v> list, <v> song <string>, <v> artist <string>";	
+			break;
+		case "16178661155":
+			$comm="admin: add <h> <v> <ph>, del <h> <v> <ph>, host: rob <v> on, rob <v> off; customer: <v> list, <v> song <string>, <v> artist <string>";	
+			break;
+		default:
+			$comm=$venue." followed by list, song <string>, artist <string>";	
+			break;
+
+	}
+	doSMS($from,$comm);
+}
+
+function turnOnMsgng()
+{
+	$ret = shell_exec('find /var/www/html/nextgen -name globals.php | xargs -n 100');
+	$retArr = explode(' ',$ret);
+	foreach ($retArr as $fn) {
+		$fStr = file_get_contents(trim($fn));
+		$fStr = str_replace("\$nosms=1;","\$nosms=0;",$fStr);
+		file_put_contents(trim($fn),$fStr);
+	}
+}
+
+
+function turnOffMsgng()
+{
+	$ret = shell_exec('find /var/www/html/nextgen -name globals.php | xargs -n 100');
+	$retArr = explode(' ',$ret);
+	var_dumper($retArr);
+	foreach ($retArr as $fn) {
+		$fStr = file_get_contents(trim($fn));
+		echo "instr: ".$fStr."<br/>";
+		$fStr = str_replace("\$nosms=0;","\$nosms=1;",$fStr);
+		echo "outstr: ".$fStr."<br/>";
+		file_put_contents(trim($fn),$fStr);
+	}
+}
+
+function doRemind()
+{
+	global $knownHosts;
+	$dow = strtolower(date('D'));
+	$hour = date('G');
+	$files = glob('/usr/logs/mysocialoke/giglists/*'); // get all file names
+	$who = array();
+	foreach($files as $file){ // iterate files
+		$f = file($file);
+		for ($i = 1; $i < count($f); $i++) {
+			$lineArr = explode(',',$f[$i]);
+			$lineArr = array_map("trim",$lineArr);
+			if ($lineArr[0] == $dow) {
+				if (count($lineArr) == 3  && is_numeric($lineArr[2])) { 
+					$thisH = $lineArr[2];
+					$reminderTime = $thisH - 1;
+					if ($reminderTime < 0) {
+						$reminderTime = 23;
+					}
+					echo "hour: ".$hour.", rt: ".$reminderTime."<br/>";
+					if ($hour == $reminderTime) {
+						$fn = explode('/',$file);
+						$who[$fn[count($fn)-1]] = $lineArr[1];
+						echo "fire off that motherfucker!";
+					} else {
+						echo "Don't fire off that motherfucker!";
+					}
+				}
+			}
+		}
+
+	}
+	foreach($who as $host => $gig) {
+		echo "host: ".$host.", gig: ".$gig."<br/>";
+		$files = glob('/usr/logs/mysocialoke/venuesOn/".$host."*'); // get all file names
+		var_dumper($files);
+		$fc = count(glob('/usr/logs/mysocialoke/venuesOn/'.$host.'*'));
+		echo "count: ".$fc."<br/>";
+		if ($fc > 0) {
+			echo $host."'s gig is on at ".$gig."<br/>";
+			unset($who[$host]);
+		} else {
+			echo "turn that fucker on!<br/>";
+			doSMS($knownHosts[$host],"Your gig at ".$gig." starts soon.  To turn on Socialoke, click: http://s-oke.com/nextgen/core/tog.php?p=".base64_encode($knownHosts[$host])."&h=".$host."&v=".$gig);
+		}
+		file_put_contents("/usr/logs/mysocialoke/reminders",date(DATE_RFC2822).": Sent to ".$host." for ".$gig.PHP_EOL,FILE_APPEND | LOCK_EX);
+	}
+	var_dumper($who);
+}

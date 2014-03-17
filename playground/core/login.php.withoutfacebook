@@ -1,0 +1,36 @@
+<?php
+
+require_once('/var/www/html/beta/core/globals.php');
+$url = startPage("login");
+$r = 0;
+if (isset($_GET['redir'])) {
+	$r = $_GET['redir'];
+}
+if (isset($_GET['ph'])) {
+	$ph = $_GET['ph'];
+}
+if (isset($_GET['fid'])) {
+	$fid = $_GET['fid'];
+}
+if ($r == '1') {
+	$loc = "http://s-oke.com/beta/core/login.php?ph=".$ph."&fid=".$fid;
+	header("Location: ".$loc);
+	exit();
+}
+session_start();
+session_unset();
+$ph = 'none';
+if (isset($_GET['ph'])) {
+	$ph = $_GET['ph'];
+	session_put('ph',$ph);
+}
+if (isset($_GET['fid'])) {
+	$fid = $_GET['fid'];
+	session_put('fid',$fid);
+}
+$uri = startPage('main');
+$host = $uri['host'];
+$hostUpper = strtoupper($uri['host']);
+header("Location: http://s-oke.com/beta/core/interim.php?ph=$ph");
+exit();
+?>

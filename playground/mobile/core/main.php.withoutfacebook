@@ -1,0 +1,153 @@
+<?php
+
+include '/var/www/html/beta/core/globals.php';
+
+session_start();
+$l = session_get("l");
+if (!isset($l)) {
+	header("Location: http://s-oke.comlogin.php");
+}
+
+session_unset();
+$ph = 'none';
+if (isset($_GET['ph'])) {
+	$ph = $_GET['ph'];
+}
+session_put('ph',$ph);
+$uri = startPage('main');
+$host = $uri['host'];
+$hostUpper = strtoupper($uri['host']);
+?>
+<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Gorham Productions</title><meta name="viewport" id="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=10.0,initial-scale=1.0,maximum-scale=1, user-scalable=no"><link rel="stylesheet" href="http://www.gorhamproductions.com/karaoke/themes/GorhamPro.min.css"><link rel="stylesheet" href="http://code.jquery.com/mobile/1.3.2/jquery.mobile.structure-1.3.2.min.css"><script src="http://code.jquery.com/jquery-1.9.1.min.js"></script><script src="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.js"></script></head>
+<body> 
+<div data-role="page" id="home" data-theme="f">
+	<div data-role="header" data-position="fixed" data-theme="f">
+    <h1>KARAOKE</h1>
+      <!--<img src="Gorham-Productions-logo-small.jpg"/>-->
+	</div>
+	<div data-role="content" data-theme="f">	
+    <p style="text-align:center; margin-top: 2px;"> Please select an option below to start exploring our giant song collection! </p>
+	<div id="s">
+	<form method=GET action="/beta/core/chooser.php" id="mainForm" name="mainForm">
+		<fieldset data-role="controlgroup" data-type="horizontal">
+		<input type="radio" name="b" id="b-1" value="SONG SEARCH" checked/>
+		<label for="b-1">SONG SEARCH</label>
+		<input type="radio" name="b" id="b-2" value="ARTIST LAST NAME SEARCH"/>
+		<label for="b-2">ARTIST SEARCH</label>
+		</fieldset>
+		<div data-role="fieldcontain">
+		<label for="q">SEARCH FOR:</label><input type="text" name="q" id="q" value="enter something" onclick="javascript: this.value = '';"/><input type="submit" name="submit" id="submit" value="GO!"/>
+		</div>
+	</form>
+	</div>
+<!--
+	<a href="#song" data-role="button" data-icon="star" data-transition="slide">Browse by Title</a>
+        <a href="#artist" data-role="button" data-icon="star" data-transition="slide">Browse by Artist (Last Name)</a>
+        <a href="popular/popular.php?redir=1" rel="external" data-role="button" data-icon="star" data-transition="slide">Most Requested Songs</a>
+        <a href="duets/duets.php?redir=1" rel="external" data-role="button" data-icon="star" data-transition="slide">Most Popular Duets</a>
+-->
+	<a href="#browsediv" data-role="button" data-icon="star" data-transition="slide">BROWSE</a>
+	<a href="/beta/core/fav/fav.php" rel="external" data-role="button" data-icon="star" data-transition="slide">SUGGESTIONS FOR YOU!</a>
+	<a href="/beta/core/vote/vote.php?r=1" rel="external" data-role="button" data-icon="star" data-transition="slide">VOTECAST<img src="/beta/core/assets/new.jpg"/></a>
+	<a href="/beta/core/giglist.php?h=<?php echo $host; ?>" rel="external" data-role="button" data-icon="star" data-transition="slide"><?php echo $hostUpper; ?>'S OTHER GIGS!</a>
+        <a href="http://www.gorhamproductions.com" rel="external"><img src="/beta/core/assets/logo-trans.png" width="300" height="115"></a>
+	</div>   
+	<div data-role="footer" data-theme="f">
+    <div style="text-align:center"> <a href="https://www.facebook.com/socialoke" rel="external"><img src="/beta/core/assets/socialoke.jpg" width="36" height="36"></a><br>Like Us</div>
+	</div>
+</div>
+
+<div data-role="page" id="song" data-theme="f">
+	<div data-role="header" data-position="fixed" data-theme="f">
+    
+    <h1>SONGS</h1>
+<!--      <img src="Gorham-Productions-logo-small.jpg"/>
+-->	</div>
+	<div data-role="content" data-theme="f">	
+		<ul id="mylistviews" data-role="listview" data-theme="f">
+	  <li data-theme="f"><a rel="external" href="s/s.php?q=A" data-transition=""> A </a></li>
+          <li data-theme="f"><a rel="external" href="s/s.php?q=B" data-transition=""> B </a></li>
+          <li data-theme="f"><a rel="external" href="s/s.php?q=C" data-transition=""> C </a></li>
+          <li data-theme="f"><a rel="external" href="s/s.php?q=D" data-transition=""> D </a></li>
+          <li data-theme="f"><a rel="external" href="s/s.php?q=E" data-transition=""> E </a></li>
+          <li data-theme="f"><a rel="external" href="s/s.php?q=F" data-transition=""> F </a></li>
+          <li data-theme="f"><a rel="external" href="s/s.php?q=G" data-transition=""> G </a></li>
+          <li data-theme="f"><a rel="external" href="s/s.php?q=H" data-transition=""> H </a></li>
+          <li data-theme="f"><a rel="external" href="s/s.php?q=I" data-transition=""> I </a></li>
+          <li data-theme="f"><a rel="external" href="s/s.php?q=J" data-transition=""> J </a></li>
+          <li data-theme="f"><a rel="external" href="s/s.php?q=K" data-transition=""> K </a></li>
+          <li data-theme="f"><a rel="external" href="s/s.php?q=L" data-transition=""> L </a></li>
+          <li data-theme="f"><a rel="external" href="s/s.php?q=M" data-transition=""> M </a></li>
+          <li data-theme="f"><a rel="external" href="s/s.php?q=N" data-transition=""> N </a></li>
+          <li data-theme="f"><a rel="external" href="s/s.php?q=O" data-transition=""> O </a></li>
+          <li data-theme="f"><a rel="external" href="s/s.php?q=P" data-transition=""> P </a></li>
+          <li data-theme="f"><a rel="external" href="s/s.php?q=Q" data-transition=""> Q </a></li>
+          <li data-theme="f"><a rel="external" href="s/s.php?q=R" data-transition=""> R </a></li>
+          <li data-theme="f"><a rel="external" href="s/s.php?q=S" data-transition=""> S </a></li>
+          <li data-theme="f"><a rel="external" href="s/s.php?q=T" data-transition=""> T </a></li>
+          <li data-theme="f"><a rel="external" href="s/s.php?q=U" data-transition=""> U </a></li>
+          <li data-theme="f"><a rel="external" href="s/s.php?q=V" data-transition=""> V </a></li>
+          <li data-theme="f"><a rel="external" href="s/s.php?q=W" data-transition=""> W </a></li>
+          <li data-theme="f"><a rel="external" href="s/s.php?q=X" data-transition=""> X </a></li>
+          <li data-theme="f"><a rel="external" href="s/s.php?q=Y" data-transition=""> Y </a></li>
+          <li data-theme="f"><a rel="external" href="s/s.php?q=Z" data-transition=""> Z </a></li>
+          <li data-theme="f"><a rel="external" href="s/s.php?q=1" data-transition=""> 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 </a></li>
+        </ul></div>
+	<div data-role="footer">
+	
+	</div>
+</div>
+
+
+<div data-role="page" id="artist" data-theme="f">
+	<div data-role="header" data-position="fixed" data-theme="f">
+		<h1>ARTISTS</h1>
+	</div>
+	<div data-role="content" data-theme="f">	
+	<ul id="mylistviews" data-role="listview" data-theme="f">
+	  <li data-theme="f"><a rel="external" href="a/a.php?q=A" data-transition=""> A </a></li>
+          <li data-theme="f"><a rel="external" href="a/a.php?q=B" data-transition=""> B </a></li>
+          <li data-theme="f"><a rel="external" href="a/a.php?q=C" data-transition=""> C </a></li>
+          <li data-theme="f"><a rel="external" href="a/a.php?q=D" data-transition=""> D </a></li>
+          <li data-theme="f"><a rel="external" href="a/a.php?q=E" data-transition=""> E </a></li>
+          <li data-theme="f"><a rel="external" href="a/a.php?q=F" data-transition=""> F </a></li>
+          <li data-theme="f"><a rel="external" href="a/a.php?q=G" data-transition=""> G </a></li>
+          <li data-theme="f"><a rel="external" href="a/a.php?q=H" data-transition=""> H </a></li>
+          <li data-theme="f"><a rel="external" href="a/a.php?q=I" data-transition=""> I </a></li>
+          <li data-theme="f"><a rel="external" href="a/a.php?q=J" data-transition=""> J </a></li>
+          <li data-theme="f"><a rel="external" href="a/a.php?q=K" data-transition=""> K </a></li>
+          <li data-theme="f"><a rel="external" href="a/a.php?q=L" data-transition=""> L </a></li>
+          <li data-theme="f"><a rel="external" href="a/a.php?q=M" data-transition=""> M </a></li>
+          <li data-theme="f"><a rel="external" href="a/a.php?q=N" data-transition=""> N </a></li>
+          <li data-theme="f"><a rel="external" href="a/a.php?q=O" data-transition=""> O </a></li>
+          <li data-theme="f"><a rel="external" href="a/a.php?q=P" data-transition=""> P </a></li>
+          <li data-theme="f"><a rel="external" href="a/a.php?q=Q" data-transition=""> Q </a></li>
+          <li data-theme="f"><a rel="external" href="a/a.php?q=R" data-transition=""> R </a></li>
+          <li data-theme="f"><a rel="external" href="a/a.php?q=S" data-transition=""> S </a></li>
+          <li data-theme="f"><a rel="external" href="a/a.php?q=T" data-transition=""> T </a></li>
+          <li data-theme="f"><a rel="external" href="a/a.php?q=U" data-transition=""> U </a></li>
+          <li data-theme="f"><a rel="external" href="a/a.php?q=V" data-transition=""> V </a></li>
+          <li data-theme="f"><a rel="external" href="a/a.php?q=W" data-transition=""> W </a></li>
+          <li data-theme="f"><a rel="external" href="a/a.php?q=X" data-transition=""> X </a></li>
+          <li data-theme="f"><a rel="external" href="a/a.php?q=Y" data-transition=""> Y </a></li>
+          <li data-theme="f"><a rel="external" href="a/a.php?q=Z" data-transition=""> Z </a></li>
+          <li data-theme="f"><a rel="external" href="a/a.php?q=1" data-transition=""> 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, ? </a></li>
+        </ul></div>
+</div>
+<div data-role="page" id="browsediv" data-theme="f">
+	<div data-role="header" data-position="fixed" data-theme="f">
+		<h1>BROWSE</h1>
+	</div>
+	<div data-role="content" data-theme="f">	
+	<ul id="mylistviews" data-role="listview" data-theme="f">
+		<li data-theme="f"><a rel="external" href="#artist" data-transition=""> Artist</a></li>
+		<li data-theme="f"><a rel="external" href="#song" data-transition=""> Song </a></li>
+		<li data-theme="f"><a rel="external" href="#genre" data-transition=""> Genre </a></li>
+	</ul>
+	</div>
+	<div data-role="footer">
+	
+	</div>
+</div>
+
+</body></html>
